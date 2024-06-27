@@ -1,16 +1,13 @@
-import torch
-from torch import nn
-from torch.nn import functional as F
-from torch import Tensor
-from typing import Optional
-from jaxtyping import Float 
-
 from dataclasses import dataclass, replace
-import numpy as np
+from typing import Optional
+
 import einops
-
+import numpy as np
+import torch
+from jaxtyping import Float
+from torch import Tensor, nn
+from torch.nn import functional as F
 from tqdm import tqdm
-
 
 # @dataclass
 # class ManyModelConfig:
@@ -94,7 +91,8 @@ def generate_data(
     n_feat: int,
     feat_prob_3t: Float[Tensor, "n_model n_data_point n_feat"],
 
-    SEED:int=0
+    SEED:int=0,
+    device: str = "cuda",
 ) -> Float[
     Tensor, "n_model n_data_point n_feat"
 ]:
@@ -104,18 +102,18 @@ def generate_data(
         (n_model,
             n_data_point,
             n_feat),
-            device='cuda'
+            device=device
     )
 
     filter_cond_3t = torch.rand(
         (n_model, n_data_point, n_feat),
-        device='cuda'
+        device=device
     ) <= feat_prob_3t
 
     sparse_x_3t = torch.where(
         filter_cond_3t,
         x_3t,
-        torch.zeros((), device='cuda'),
+        torch.zeros((), device=device),
     )
 
     return sparse_x_3t

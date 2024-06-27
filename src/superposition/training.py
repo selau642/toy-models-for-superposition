@@ -1,17 +1,14 @@
-import torch
-from torch import Tensor
-from jaxtyping import Float 
-from typing import Dict, Tuple, List, Any, Optional
-
-from tqdm import tqdm
 import json
+from typing import Any, Dict, List, Optional, Tuple
 
-from src.superposition.generate_x import \
-    generate_sparse_x_2t, \
-    normalize_matrix
-
+import torch
+from jaxtyping import Float
 from safetensors import safe_open
 from safetensors.torch import save_file
+from torch import Tensor
+from tqdm import tqdm
+
+from src.superposition.generate_x import generate_sparse_x_2t, normalize_matrix
 
 
 def train_toy_model(
@@ -26,7 +23,8 @@ def train_toy_model(
     sparsity: float,
 
     lr:float=0.001,
-    weight_decay:float=0.01
+    weight_decay:float=0.01,
+    device: str = "cuda",
 
 ) -> Tuple[List[float], Dict[str, Tensor]]:
     """
@@ -35,7 +33,7 @@ def train_toy_model(
     returns training_lost_list, 
 
     """
-    toy_model = toy_model.to("cuda")
+    toy_model = toy_model.to(device)
     optim = torch.optim.AdamW(
         toy_model.parameters(),
         lr=lr,
@@ -47,7 +45,7 @@ def train_toy_model(
 
     weight_t = torch.tensor([
         0.7 ** i for i in range(n_feat)
-    ]).to('cuda')
+    ]).to(device)
 
     for i in tqdm(range(n_epoch)):
         sparse_x_2t = generate_sparse_x_2t(
@@ -59,8 +57,8 @@ def train_toy_model(
 
         norm_x_2t = normalize_matrix(sparse_x_2t)
 
-        norm_x_2t = norm_x_2t.to('cuda')
-        actual_2t = norm_x_2t.to('cuda')
+        norm_x_2t = norm_x_2t.to(device)
+        actual_2t = norm_x_2t.to(device)
 
         optim.zero_grad()
         pred_2t: Float[Tensor, 'n_feat n_data'] = toy_model(

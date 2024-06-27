@@ -1,18 +1,18 @@
-import torch
-from typing import List
 from pathlib import Path
+from typing import List
 
-from src.superposition.training import \
-    train_toy_model
+import torch
 
-from src.superposition.toynet import \
-    OneWeightLinearNet
+from src.superposition.toynet import OneWeightLinearNet
+from src.superposition.training import train_toy_model
 
 if __name__ == "__main__":
     sparsity_list = [0, 0.7, 0.9, 0.99, 0.999]
     n_data = 1024
     n_feat = 20
     n_hidden = 5
+    device = "cpu"  
+    assert device in ("cpu", "cuda", "mps")
 
     two_w_net_name = 'one_w_net'
 
@@ -46,6 +46,7 @@ if __name__ == "__main__":
             n_epoch=n_epoch,
             n_data=n_data,    
             n_feat=n_feat,
-            sparsity=sparsity
+            sparsity=sparsity,
+            device=device,
         )
 

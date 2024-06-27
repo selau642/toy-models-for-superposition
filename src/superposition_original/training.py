@@ -1,19 +1,16 @@
-import torch
-import numpy as np
 import time
-from tqdm import trange
+
 import einops
+import numpy as np
+import torch
+from tqdm import trange
 
-from src.superposition_original.multi_model import \
-    generate_data, \
-    MultiModel
-
-from src.model_io import \
-    save_model
-
-from src.superposition_original.data_structure.multi_model import \
-    MultiModelConfig, \
-    SuperPositionOriginal
+from src.model_io import save_model
+from src.superposition_original.data_structure.multi_model import (
+    MultiModelConfig,
+    SuperPositionOriginal,
+)
+from src.superposition_original.multi_model import MultiModel, generate_data
 
 
 def linear_lr(
@@ -42,7 +39,8 @@ def optim_multi_model(
     print_freq=100,
     lr=1e-3,
     lr_scale=const_lr,
-    hooks=[]
+    hooks=[],
+    device: str = "cuda",
 ):
     optim = torch.optim.AdamW(
         list(multi_model.parameters()),
@@ -53,8 +51,8 @@ def optim_multi_model(
     n_data_point = model_config.n_data_point
     n_feat = model_config.n_feat
 
-    feat_prob_3t = model_config.feat_prob_3t.to("cuda")
-    feat_weight_3t = model_config.feat_weight_3t.to("cuda") 
+    feat_prob_3t = model_config.feat_prob_3t.to(device)
+    feat_weight_3t = model_config.feat_weight_3t.to(device) 
 
     start = time.time()
     with trange(total_step) as range_step:
@@ -68,8 +66,9 @@ def optim_multi_model(
                 n_model=n_model, 
                 n_data_point=n_data_point,
                 n_feat=n_feat,
-                feat_prob_3t=feat_prob_3t
-                )
+                feat_prob_3t=feat_prob_3t,
+                device=device,
+            )
             # (n_model, n_data, n_feat )
 
             pred_3t = multi_model(x_3t)
