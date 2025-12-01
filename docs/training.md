@@ -10,7 +10,7 @@ pip install -r requirements.txt
 1. Setup environment  
 ```
 source venv/bin/activate
-export PYTHONPATH="/home/username/toy-models-for-superposision/:${PYTHONPATH}"
+export PYTHONPATH="/home/username/toy-models-for-superposition/:${PYTHONPATH}"
 ```
   
 2. One Weight Linear Net  
@@ -28,7 +28,7 @@ python src/superposition/a2_viz_one_identity_bias.py
   
 Visualize w1, bias  
 ```
-python src/superposition/a3_viz_one_identity_bias.py
+python src/superposition/a3_viz_one_weight_bias.py
 ```
 
 3. Two Weight Linear Net  
@@ -36,16 +36,16 @@ Training
 learning rate = 0.001  
 weight decay = 0.01  
 ```
-python src/superposition/b1_train_one_weight.py
+python src/superposition/b1_train_two_weight.py
 ```
   
 Visualize w1 @ w2, bias  
 ```
-python src/superposition/b1_train_one_weight.py
+python src/superposition/b2_viz_two_identity_bias.py
 ```
 
 Visualize w1, w2, bias
 ```
-python src/superposition/b1_train_one_weight.py
+python src/superposition/b3_viz_two_weight_bias.py
 ```
 
